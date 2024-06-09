@@ -3,13 +3,11 @@ package com.tools.expenseManager.service;
 import com.tools.expenseManager.dao.*;
 import com.tools.expenseManager.entity.Contributor;
 import com.tools.expenseManager.entity.Expense;
-import com.tools.expenseManager.exceptions.NullFieldException;
 import com.tools.expenseManager.exceptions.ObjectNotFoundException;
 import com.tools.expenseManager.repository.ContributorRepository;
 import com.tools.expenseManager.repository.ExpenseRepository;
 import com.tools.expenseManager.utility.ContributorUtility;
 import com.tools.expenseManager.utility.ExpenseUtility;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
