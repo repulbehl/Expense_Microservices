@@ -31,7 +31,7 @@ public class Expense {
     private String paymentMode; // Check the final payment made by UPI,CASH,MANDATE
     @Column(name = "EXPENSE_PAYMENT_STATUS")
     private String expensePaymentStatus; // True if payment for expense is completed or False if not completed
-    @OneToMany(targetEntity = Contributor.class ,mappedBy = "expense",cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Contributor.class ,mappedBy = "expense",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contributor> contributor;
 
 }

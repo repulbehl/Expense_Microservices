@@ -19,7 +19,7 @@ public class Contributor {
     @Column(name = "ACCOUNT_NUMBER")
     @NonNull
     private String accountNumber;  // Account number of the Contributor
-    @Column(name = "EXPENSE_PAYER")
+    @Column(name = "EXPENSE_CREATOR")
     @NonNull
     private boolean expenseCreator;  // it is the value for person who created the expense
     @Column(name = "EXPENSE_CONTRIBUTOR")
@@ -28,7 +28,7 @@ public class Contributor {
     @Column(name = "CONTRIBUTOR_TYPE")
     private int contributorShareExpense; // Amount contributed in the expense
     @Column(name = "SPLIT_AMOUNT_PORTION")
-    private int splitAmountPortion;
+    private int splitAmountPortion; // Will fill by the logic of code
     @ManyToOne(targetEntity = Expense.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "expense")
     private  Expense expense;

@@ -2,13 +2,16 @@ package com.tools.expenseManager.service;
 
 import com.tools.expenseManager.entity.Expense;
 import com.tools.expenseManager.exceptions.NullFieldException;
-import com.tools.expenseManager.model.FetchExpense;
-import com.tools.expenseManager.model.ErrorReporter;
-import com.tools.expenseManager.model.ExpenseMetadataInput;
-import com.tools.expenseManager.model.ExpenseMetadataOutput;
+import com.tools.expenseManager.dao.FetchExpense;
+import com.tools.expenseManager.dao.ErrorReporter;
+import com.tools.expenseManager.dao.ExpenseMetadataInput;
+import com.tools.expenseManager.dao.ExpenseMetadataOutput;
+import com.tools.expenseManager.exceptions.ObjectNotFoundException;
 import com.tools.expenseManager.repository.ExpenseRepository;
 import com.tools.expenseManager.utility.ExpenseUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 public class ExpenseServiceImpl implements ExpenseService{
 
@@ -17,7 +20,7 @@ public class ExpenseServiceImpl implements ExpenseService{
     @Autowired
     ExpenseUtility expenseUtility;
     @Override
-    public ExpenseMetadataOutput addExpense(ExpenseMetadataInput expenseMetadataInput) {
+    public ExpenseMetadataOutput addExpense(ExpenseMetadataInput expenseMetadataInput) throws NullFieldException {
         Expense expense = expenseUtility.expenseInputConverter(expenseMetadataInput);
         expenseRepository.save(expense);
         ExpenseMetadataOutput expenseMetadataOutput = expenseUtility.expenseOutputConverter(expense);
@@ -25,16 +28,28 @@ public class ExpenseServiceImpl implements ExpenseService{
     }
 
     @Override
-    public ExpenseMetadataOutput updateExpenseDetails() {
-        return null;
+    public ExpenseMetadataOutput updateExpenseDetails(Expense expense) throws ObjectNotFoundException {
+        Expense expenseFetch = getExpenseById(expense.getExpenseId());
+        expenseFetch.setExpenseName(expense.getExpenseName());
+        expenseFetch.setDescription(expense.getDescription());
+        expenseFetch.setAmount(expense.getAmount());
+        expenseFetch.setExpenseSplitCheck(expense.isExpenseSplitCheck());
+        expenseFetch.setPaymentMode(expense.getPaymentMode());
+        expenseFetch.setExpensePaymentStatus(expense.getExpensePaymentStatus());
+        expenseFetch.setContributor(expense.getContributor());
+        Expense expenseUpdated = expenseRepository.save(expense);
+        return expenseUtility.expenseOutputConverter(expenseUpdated);
     }
 
-    private Expense getExpenseById(int id){
-        Expense expense = expenseRepository.getReferenceById(id);
-        return expense;
+    private Expense getExpenseById(int id) throws ObjectNotFoundException {
+        Optional<Expense> expense = expenseRepository.findById(id);
+        if (expense.isPresent()){
+            return expense.get();
+        }
+        throw  new ObjectNotFoundException(new ErrorReporter<>(id,null));
     }
     @Override
-    public ExpenseMetadataOutput deleteExpense(FetchExpense fetchExpense) {
+    public ExpenseMetadataOutput deleteExpense(FetchExpense fetchExpense) throws ObjectNotFoundException, NullFieldException {
         Expense expense = getExpenseById(fetchExpense.getId());
         if (expense.getExpenseName().equalsIgnoreCase(fetchExpense.getExpenseName())){
             expenseRepository.delete(expense);
@@ -47,7 +62,7 @@ public class ExpenseServiceImpl implements ExpenseService{
     }
 
     @Override
-    public ExpenseMetadataOutput getExpenseDetails(FetchExpense fetchExpense) {
+    public ExpenseMetadataOutput getExpenseDetails(FetchExpense fetchExpense) throws NullFieldException, ObjectNotFoundException {
         Expense expense = getExpenseById(fetchExpense.getId());
         if (expense.getExpenseName().equalsIgnoreCase(fetchExpense.getExpenseName())) {
             ExpenseMetadataOutput expenseMetadataOutput = expenseUtility.expenseOutputConverter(expense);

@@ -1,4 +1,4 @@
-package com.tools.expenseManager.model;
+package com.tools.expenseManager.dao;
 
 import lombok.Data;
 
