@@ -20,7 +20,6 @@ public class ContributorServiceImpl implements ContributorService {
     @Autowired
     ContributorUtility contributorUtility;
 
-
     @Autowired
     ExpenseUtility expenseUtility;
 
@@ -29,6 +28,9 @@ public class ContributorServiceImpl implements ContributorService {
 
     @Autowired
     ExpenseRepository expenseRepository;
+
+    @Autowired
+    AmountSplitterService amountSplitterService;
 
     private ExpenseMetadataOutput fetchExpenseDetails (FetchExpense fetchExpense) throws Exception {
         ExpenseMetadataOutput expense = expenseService.getExpenseDetails(fetchExpense);
@@ -42,6 +44,7 @@ public class ContributorServiceImpl implements ContributorService {
     public ExpenseMetadataOutput addContributor(ContributorMetadataInput contributorMetadataInput) throws Exception {
         ExpenseMetadataOutput expenseMetadataOutput = fetchExpenseDetails(contributorMetadataInput.getExpense());
         Expense expense = contributorUtility.addContributorMapper(contributorMetadataInput,expenseMetadataOutput);
+        expense  = amountSplitterService.splitAmount(expense);
         return expenseService.updateExpenseDetails(expense);
     }
 
@@ -55,9 +58,10 @@ public class ContributorServiceImpl implements ContributorService {
                 contributor.setAccountNumber(contributorMetadataInput.getAccountNumber());
                 contributor.setExpenseCreator(contributorMetadataInput.isExpenseCreator());
                 contributor.setExpenseContributor(contributorMetadataInput.isExpenseContributor());
-                contributor.setContributorShareExpense(contributorMetadataInput.getContributorShareExpense());
+                contributor.setContributorShareAmount(contributorMetadataInput.getContributorShareExpense());
             }
         }
+        expense = amountSplitterService.splitAmount(expense);
         return expenseService.updateExpenseDetails(expense);
     }
 

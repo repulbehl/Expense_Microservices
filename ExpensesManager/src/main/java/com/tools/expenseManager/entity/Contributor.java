@@ -25,10 +25,12 @@ public class Contributor {
     @Column(name = "EXPENSE_CONTRIBUTOR")
     @NonNull
     private boolean expenseContributor; // check the person contributes in the expense
-    @Column(name = "CONTRIBUTOR_TYPE")
-    private int contributorShareExpense; // Amount contributed in the expense
+    @Column(name = "CONTRIBUTOR_SHARE_AMOUNT")
+    private float contributorShareAmount; // Amount contributed in the expense
     @Column(name = "SPLIT_AMOUNT_PORTION")
-    private int splitAmountPortion; // Will fill by the logic of code
+    private float splitAmountPortion; // Will fill by the logic of code
+    @Column(name ="ContributorStatus")
+    private String contributorStatus;  // Will have the value that it is receiver or payer of expense
     @ManyToOne(targetEntity = Expense.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "expense")
     private  Expense expense;

@@ -24,9 +24,9 @@ public class ContributorUtility {
         } else if (contributorMetadataInput.getAccountNumber().isEmpty()) {
             throw  new NullFieldException(new ErrorReporter<String,ContributorMetadataInput>(contributorMetadataInput.getAccountNumber(),contributorMetadataInput));
         }
-        Contributor contributor = new Contributor(contributorMetadataInput.getContributorName(), contributorMetadataInput.getAccountNumber(), contributorMetadataInput.isExpenseCreator(), contributorMetadataInput.isExpenseContributor());
+        ContributorMetadataOutput contributor = new ContributorMetadataOutput(contributorMetadataInput.getContributorName(), contributorMetadataInput.getAccountNumber(), contributorMetadataInput.isExpenseCreator(), contributorMetadataInput.isExpenseContributor());
         contributor.setContributorShareExpense(contributorMetadataInput.getContributorShareExpense());
-        List<Contributor> contributorList = new ArrayList<>();
+        List<ContributorMetadataOutput> contributorList = new ArrayList<>();
         contributorList.add(contributor);
         return expenseUtility.expenseMetadataOutputToExpenseConverter(expenseMetadataOutput,contributorList);
     }
@@ -38,6 +38,15 @@ public class ContributorUtility {
         return expense;
     }
 
+    public  List<ContributorMetadataOutput> listOfContributorMetadataOutputMapper (List<Contributor> contributorList){
+        List<ContributorMetadataOutput> contributorMetadataOutputList = new ArrayList<>();
+        for(Contributor contributor : contributorList){
+           ContributorMetadataOutput contributorMetadataOutput = contributorMetadataOutputMapper(contributor);
+           contributorMetadataOutputList.add(contributorMetadataOutput);
+        }
+        return  contributorMetadataOutputList;
+    }
+
     public ContributorMetadataOutput contributorMetadataOutputMapper(Contributor contributor){
         ContributorMetadataOutput contributorMetadataOutput = new ContributorMetadataOutput();
         contributorMetadataOutput.setContributorId(contributor.getContributorId());
@@ -45,10 +54,25 @@ public class ContributorUtility {
         contributorMetadataOutput.setAccountNumber(contributor.getAccountNumber());
         contributorMetadataOutput.setExpenseCreator(contributor.isExpenseCreator());
         contributorMetadataOutput.setExpenseContributor(contributor.isExpenseContributor());
-        contributorMetadataOutput.setContributorShareExpense(contributor.getContributorShareExpense());
+        contributorMetadataOutput.setContributorShareExpense(contributor.getContributorShareAmount());
         contributorMetadataOutput.setSplitAmountPortion(contributor.getSplitAmountPortion());
         contributorMetadataOutput.setExpense( expenseUtility.expenseOutputConverter(contributor.getExpense()));
         return  contributorMetadataOutput;
+    }
+
+    public List<Contributor> listOfContributorMapper(List<ContributorMetadataOutput> contributorMetadataOutputList){
+        List<Contributor> contributorList = new ArrayList<>();
+        for(ContributorMetadataOutput contributorMetadataOutput : contributorMetadataOutputList){
+            Contributor contributor = contributorMapper(contributorMetadataOutput);
+            contributorList.add(contributor);
+        }
+        return contributorList;
+    }
+
+    public Contributor contributorMapper(ContributorMetadataOutput contributorMetadataOutput){
+        Contributor contributor = new Contributor(contributorMetadataOutput.getContributorName(),contributorMetadataOutput.getAccountNumber(),contributorMetadataOutput.isExpenseCreator(),contributorMetadataOutput.isExpenseContributor());
+        contributor.setContributorShareAmount(contributorMetadataOutput.getContributorShareExpense());
+        return contributor;
     }
 
 

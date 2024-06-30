@@ -23,7 +23,7 @@ public class Expense {
     private  String description; // Expense Description
     @Column(name = "AMOUNT")
     @NonNull
-    private  int amount; // Expense Total Amount
+    private float amount; // Expense Total Amount
     @Column(name = "EXPENSE_SPLIT_CHECK")
     @NonNull
     private  boolean expenseSplitCheck; //if its true then count the number of contributors and divide the splitting amount as per they paid and update the amount in contributor splitAmountPortion field

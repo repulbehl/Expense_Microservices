@@ -19,12 +19,15 @@ public class ExpenseServiceImpl implements ExpenseService{
     ExpenseRepository expenseRepository;
     @Autowired
     ExpenseUtility expenseUtility;
+    @Autowired
+    AmountSplitterService amountSplitterService;
+
     @Override
     public ExpenseMetadataOutput addExpense(ExpenseMetadataInput expenseMetadataInput) throws NullFieldException {
         Expense expense = expenseUtility.expenseInputConverter(expenseMetadataInput);
+        expense = amountSplitterService.splitAmount(expense);
         expenseRepository.save(expense);
-        ExpenseMetadataOutput expenseMetadataOutput = expenseUtility.expenseOutputConverter(expense);
-        return expenseMetadataOutput;
+        return expenseUtility.expenseOutputConverter(expense);
     }
 
     @Override
@@ -65,8 +68,7 @@ public class ExpenseServiceImpl implements ExpenseService{
     public ExpenseMetadataOutput getExpenseDetails(FetchExpense fetchExpense) throws NullFieldException, ObjectNotFoundException {
         Expense expense = getExpenseById(fetchExpense.getId());
         if (expense.getExpenseName().equalsIgnoreCase(fetchExpense.getExpenseName())) {
-            ExpenseMetadataOutput expenseMetadataOutput = expenseUtility.expenseOutputConverter(expense);
-            return expenseMetadataOutput;
+            return expenseUtility.expenseOutputConverter(expense);
         }
         ErrorReporter<Integer,Expense> errorReporter = new ErrorReporter<Integer,Expense>(fetchExpense.getId(),expense);
         throw new NullFieldException(errorReporter);
